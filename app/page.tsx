@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { Calendar, Wallet, ArrowRight, Sparkles } from "lucide-react";
+import { Calendar, Wallet, ArrowRight, Sparkles, Star } from "lucide-react";
 import { useUser } from "@/components/user-provider";
+import { SparkleText } from "@/components/sparkle-text";
 import { COLORS } from "@/lib/constants";
 
 function DecorativeDots({ color }: { color: string }) {
@@ -24,9 +25,35 @@ function DecorativeDots({ color }: { color: string }) {
   );
 }
 
+function DecorativeStars() {
+  return (
+    <div className="pointer-events-none absolute -top-4 -right-4 flex gap-2">
+      <Star
+        className="size-4"
+        fill="#F5C518"
+        stroke="none"
+        style={{ animation: "twinkle 3s ease-in-out infinite", opacity: 0.6 }}
+      />
+      <Star
+        className="size-2.5 mt-2"
+        fill="#F5C518"
+        stroke="none"
+        style={{ animation: "twinkle 2.5s ease-in-out infinite 0.5s", opacity: 0.4 }}
+      />
+      <Star
+        className="size-3 mt-4"
+        fill="#F5C51888"
+        stroke="none"
+        style={{ animation: "twinkle 3.5s ease-in-out infinite 1s", opacity: 0.5 }}
+      />
+    </div>
+  );
+}
+
 export default function Home() {
   const { currentUser, colors } = useUser();
 
+  const isVale = currentUser === "Vale";
   const greeting =
     currentUser === "Luca" ? "Hey Luca!" : "Hey Vale!";
 
@@ -69,14 +96,22 @@ export default function Home() {
           <div className="mb-3 flex items-center gap-2">
             <Sparkles
               className="size-5"
-              style={{ color: colors.secondary }}
+              style={{ color: isVale ? "#F5C518" : colors.secondary }}
             />
             <span
               className="text-sm font-medium"
               style={{ color: colors.secondary }}
             >
-              Welcome back
+              {isVale ? "Welcome back, starshine" : "Welcome back"}
             </span>
+            {isVale && (
+              <Star
+                className="size-3.5"
+                fill="#F5C518"
+                stroke="none"
+                style={{ animation: "sparkle-pulse 2s ease-in-out infinite" }}
+              />
+            )}
           </div>
 
           {/* Greeting */}
@@ -84,13 +119,15 @@ export default function Home() {
             className="text-4xl font-bold tracking-tight md:text-5xl"
             style={{ color: colors.primary }}
           >
-            {greeting}
+            <SparkleText position="both">
+              {greeting}
+            </SparkleText>
           </h1>
           <p
             className="mt-2 text-base md:text-lg"
             style={{ color: COLORS.shared.textMuted }}
           >
-            What would you like to do today?
+            {isVale ? "What magical things shall we do today?" : "What would you like to do today?"}
           </p>
         </div>
       </div>
@@ -109,7 +146,7 @@ export default function Home() {
                   "0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03)",
               }}
             >
-              <DecorativeDots color={card.dotColor} />
+              {isVale ? <DecorativeStars /> : <DecorativeDots color={card.dotColor} />}
 
               {/* Icon circle */}
               <div
@@ -147,18 +184,28 @@ export default function Home() {
 
         {/* Subtle bottom decoration */}
         <div className="mt-10 flex items-center justify-center gap-2">
-          <div
-            className="h-1 w-1 rounded-full"
-            style={{ backgroundColor: colors.primary, opacity: 0.2 }}
-          />
-          <div
-            className="h-1.5 w-1.5 rounded-full"
-            style={{ backgroundColor: colors.secondary, opacity: 0.3 }}
-          />
-          <div
-            className="h-1 w-1 rounded-full"
-            style={{ backgroundColor: colors.accent, opacity: 0.2 }}
-          />
+          {isVale ? (
+            <>
+              <Star className="size-2.5" fill="#F5C51866" stroke="none" style={{ animation: "twinkle 3s ease-in-out infinite" }} />
+              <Star className="size-3.5" fill="#F5C518AA" stroke="none" style={{ animation: "twinkle 2.5s ease-in-out infinite 0.3s" }} />
+              <Star className="size-2.5" fill="#F5C51866" stroke="none" style={{ animation: "twinkle 3s ease-in-out infinite 0.6s" }} />
+            </>
+          ) : (
+            <>
+              <div
+                className="h-1 w-1 rounded-full"
+                style={{ backgroundColor: colors.primary, opacity: 0.2 }}
+              />
+              <div
+                className="h-1.5 w-1.5 rounded-full"
+                style={{ backgroundColor: colors.secondary, opacity: 0.3 }}
+              />
+              <div
+                className="h-1 w-1 rounded-full"
+                style={{ backgroundColor: colors.accent, opacity: 0.2 }}
+              />
+            </>
+          )}
         </div>
       </div>
     </div>

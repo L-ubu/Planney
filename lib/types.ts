@@ -21,3 +21,16 @@ export interface FinanceEntry {
   is_recurring: boolean;
   created_at: string;
 }
+
+export interface Ticket {
+  id: string;
+  created_by: Person;
+  assigned_to: Person;
+  title: string;
+  description: string | null;
+  category: string;
+  priority: "low" | "medium" | "high";
+  status: "open" | "in_progress" | "done";
+  created_at: string;
+  updated_at: string;
+}

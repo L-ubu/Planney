@@ -49,3 +49,14 @@ export const INCOME_CATEGORIES = [
   "Refund",
   "Other",
 ] as const;
+
+export const TICKET_CATEGORIES = [
+  "Planney Fix",
+  "BugQuiz Fix",
+  "App Idea",
+  "Household",
+  "Shopping",
+  "Date Night",
+  "Travel",
+  "Other",
+] as const;

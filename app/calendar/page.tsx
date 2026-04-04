@@ -13,7 +13,7 @@ import {
   isToday,
   eachDayOfInterval,
 } from "date-fns";
-import { ChevronLeft, ChevronRight, Calendar, Plus } from "lucide-react";
+import { ChevronLeft, ChevronRight, Calendar, Plus, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/components/user-provider";
 import { useWorkHours } from "@/hooks/use-work-hours";
@@ -35,13 +35,16 @@ function formatTimeShort(time: string): string {
 function WorkHourPill({
   workHour,
   onClick,
+  isValeActive,
 }: {
   workHour: WorkHour;
   onClick: (wh: WorkHour) => void;
+  isValeActive: boolean;
 }) {
   const personColors = COLORS[workHour.person as Person];
   const startShort = formatTimeShort(workHour.start_time);
   const endShort = formatTimeShort(workHour.end_time);
+  const showStar = isValeActive && workHour.person === "Vale";
 
   return (
     <button
@@ -49,17 +52,25 @@ function WorkHourPill({
         e.stopPropagation();
         onClick(workHour);
       }}
-      className="w-full text-left rounded-lg px-1.5 py-0.5 text-[10px] sm:text-xs font-medium leading-tight truncate transition-all hover:opacity-80 active:scale-95 cursor-pointer"
+      className="w-full text-left rounded-lg px-1.5 py-0.5 text-[10px] sm:text-xs font-medium leading-tight truncate transition-all hover:opacity-80 active:scale-95 cursor-pointer flex items-center gap-0.5"
       style={{
         backgroundColor: personColors.lightPrimary,
         color: personColors.primary,
       }}
       title={`${workHour.person}: ${workHour.start_time.slice(0, 5)} - ${workHour.end_time.slice(0, 5)}${workHour.notes ? ` (${workHour.notes})` : ""}`}
     >
-      <span className="hidden sm:inline">
+      {showStar && (
+        <Star
+          className="size-2 sm:size-2.5 shrink-0"
+          fill="#F5C518"
+          stroke="none"
+          style={{ animation: "sparkle-pulse 2.5s ease-in-out infinite" }}
+        />
+      )}
+      <span className="hidden sm:inline truncate">
         {startShort}-{endShort}
       </span>
-      <span className="sm:hidden">
+      <span className="sm:hidden truncate">
         {startShort}-{endShort}
       </span>
     </button>
@@ -72,12 +83,14 @@ function DayCell({
   workHoursForDay,
   onDayClick,
   onPillClick,
+  isValeActive,
 }: {
   day: Date;
   currentMonth: Date;
   workHoursForDay: WorkHour[];
   onDayClick: (day: Date) => void;
   onPillClick: (wh: WorkHour) => void;
+  isValeActive: boolean;
 }) {
   const inMonth = isSameMonth(day, currentMonth);
   const today = isToday(day);
@@ -94,11 +107,25 @@ function DayCell({
       style={
         {
           backgroundColor: today ? COLORS.shared.surface : "transparent",
-          borderColor: today ? COLORS.shared.border : `${COLORS.shared.border}80`,
-          "--tw-ring-color": today ? `${COLORS.shared.text}40` : undefined,
+          borderColor: today
+            ? isValeActive ? "#F5C51866" : COLORS.shared.border
+            : `${COLORS.shared.border}80`,
+          "--tw-ring-color": today
+            ? isValeActive ? "#F5C51880" : `${COLORS.shared.text}40`
+            : undefined,
         } as React.CSSProperties
       }
     >
+      {/* Today star for Vale */}
+      {today && isValeActive && (
+        <Star
+          className="absolute -top-1.5 -right-1.5 size-3.5 sm:size-4"
+          fill="#F5C518"
+          stroke="none"
+          style={{ animation: "sparkle-pulse 2s ease-in-out infinite" }}
+        />
+      )}
+
       {/* Day number */}
       <span
         className={`
@@ -106,7 +133,9 @@ function DayCell({
           ${today ? "flex size-6 sm:size-7 items-center justify-center rounded-full text-white" : "pl-0.5"}
         `}
         style={{
-          backgroundColor: today ? COLORS.shared.text : undefined,
+          backgroundColor: today
+            ? isValeActive ? "#E63B2E" : COLORS.shared.text
+            : undefined,
           color: today
             ? "#fff"
             : inMonth
@@ -120,7 +149,7 @@ function DayCell({
       {/* Work hour pills */}
       <div className="flex flex-col gap-0.5 mt-auto">
         {workHoursForDay.slice(0, 3).map((wh) => (
-          <WorkHourPill key={wh.id} workHour={wh} onClick={onPillClick} />
+          <WorkHourPill key={wh.id} workHour={wh} onClick={onPillClick} isValeActive={isValeActive} />
         ))}
         {workHoursForDay.length > 3 && (
           <span
@@ -228,6 +257,7 @@ export default function CalendarPage() {
   );
 
   const isCurrentMonth = isSameMonth(currentMonth, new Date());
+  const isVale = currentUser === "Vale";
 
   return (
     <div
@@ -239,23 +269,39 @@ export default function CalendarPage() {
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-2.5">
             <div
-              className="flex size-10 items-center justify-center rounded-xl text-white shadow-sm"
+              className="relative flex size-10 items-center justify-center rounded-xl text-white shadow-sm"
               style={{ backgroundColor: colors.primary }}
             >
               <Calendar className="size-5" />
+              {isVale && (
+                <Star
+                  className="absolute -top-1 -right-1 size-3.5"
+                  fill="#F5C518"
+                  stroke="none"
+                  style={{ animation: "sparkle-pulse 2s ease-in-out infinite" }}
+                />
+              )}
             </div>
             <div>
               <h1
-                className="text-xl sm:text-2xl font-bold tracking-tight"
+                className="text-xl sm:text-2xl font-bold tracking-tight flex items-center gap-1.5"
                 style={{ color: colors.primary }}
               >
                 Calendar
+                {isVale && (
+                  <Star
+                    className="size-4 sm:size-5"
+                    fill="#F5C518"
+                    stroke="none"
+                    style={{ animation: "twinkle 3s ease-in-out infinite" }}
+                  />
+                )}
               </h1>
               <p
                 className="text-xs sm:text-sm"
                 style={{ color: COLORS.shared.textMuted }}
               >
-                Work schedules for both of you
+                {isVale ? "Your sparkly schedule together" : "Work schedules for both of you"}
               </p>
             </div>
           </div>
@@ -379,6 +425,7 @@ export default function CalendarPage() {
                     workHoursForDay={dayWorkHours}
                     onDayClick={handleDayClick}
                     onPillClick={handlePillClick}
+                    isValeActive={isVale}
                   />
                 );
               })}

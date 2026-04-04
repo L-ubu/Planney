@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Calendar, Wallet, Heart, ChevronDown } from "lucide-react";
+import { Home, Calendar, Wallet, TicketCheck, ChevronDown } from "lucide-react";
 import { useUser } from "@/components/user-provider";
 import { PEOPLE } from "@/lib/constants";
 import { COLORS } from "@/lib/constants";
@@ -13,6 +13,7 @@ const NAV_ITEMS = [
   { href: "/", label: "Home", icon: Home },
   { href: "/calendar", label: "Calendar", icon: Calendar },
   { href: "/finances", label: "Finances", icon: Wallet },
+  { href: "/tickets", label: "Tickets", icon: TicketCheck },
 ] as const;
 
 function UserPicker() {
@@ -96,20 +97,16 @@ export function Navbar() {
             {/* Logo / App name */}
             <Link href="/" className="flex items-center gap-1.5 group">
               <span
-                className="text-lg font-bold tracking-tight"
+                className="text-xl font-bold tracking-tight"
                 style={{ color: colors.primary }}
               >
-                Luca
+                Plan
               </span>
-              <Heart
-                className="size-4 transition-transform group-hover:scale-110"
-                style={{ color: colors.accent, fill: colors.accent }}
-              />
               <span
-                className="text-lg font-bold tracking-tight"
-                style={{ color: colors.primary }}
+                className="text-xl font-bold tracking-tight"
+                style={{ color: colors.accent }}
               >
-                Vale
+                ney
               </span>
             </Link>
 
