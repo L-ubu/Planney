@@ -2,6 +2,8 @@
 
 A shared planning app for couples. Manage work schedules on a shared calendar, organize tasks on a board, and track finances with spending insights and monthly projections.
 
+![Screenshot](assets/screenshot.png)
+
 ## Features
 
 **Calendar**
